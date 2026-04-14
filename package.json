@@ -1,0 +1,21 @@
+{
+  "name": "vipps-js",
+  "version": "1.0.0",
+  "description": "A modern JavaScript library for Vipps MobilePay APIs",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "vipps",
+    "mobilepay",
+    "payments",
+    "javascript",
+    "node.js",
+    "deno",
+    "bun"
+  ],
+  "author": "",
+  "license": "MIT"
+}

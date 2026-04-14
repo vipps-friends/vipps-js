@@ -81,14 +81,14 @@ vipps-js/
 - The error object should ideally contain the JSON body from Vipps (error code, message).
 
 ## Idempotency
-- Users can provide their own `Idempotency-Key`.
+- Reference key is a idempotency key.
 - If not provided, the library will generate a UUID by default for write operations.
 - Provide a helper function to generate a UUID (e.g., prefixed with `system-name-`).
 
 ## Client Configuration
 ```javascript
 /**
- * @typedef {Object} VippsConfig
+ * @typedef {Object} Config
  * @property {string} clientId
  * @property {string} clientSecret
  * @property {string} subscriptionKey
