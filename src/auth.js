@@ -1,8 +1,16 @@
 /**
+ * @typedef {Object} AccessTokenResponse
+ * @property {string} token_type - Always "Bearer".
+ * @property {number} expires_in - Validity period in seconds.
+ * @property {string} expires_on - Expiry time as a Unix timestamp (UTC).
+ * @property {string} access_token - The JWT (JSON Web Token).
+ */
+
+/**
  * Internal helper to fetch a new token from Vipps.
  * 
- * @param {import('./types.js').VippsInstance} vipps 
- * @returns {Promise<import('./types.js').AccessTokenResponse>}
+ * @param {import('./client.js').VippsInstance} vipps 
+ * @returns {Promise<AccessTokenResponse>}
  */
 async function fetchToken(vipps) {
   const { clientId, clientSecret, subscriptionKey, useTestMode } = vipps.config;
@@ -30,7 +38,7 @@ async function fetchToken(vipps) {
 /**
  * Retrieves a valid access token, handling caching and renewal.
  * 
- * @param {import('./types.js').VippsInstance} vipps - The Vipps instance.
+ * @param {import('./client.js').VippsInstance} vipps - The Vipps instance.
  * @returns {Promise<string>} The access token.
  */
 export async function getAccessToken(vipps) {
