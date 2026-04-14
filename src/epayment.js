@@ -4,12 +4,12 @@ import { generateUUID } from './utils.js';
 /**
  * @typedef {Object} Amount
  * @property {number} value - Amount in minor units (e.g., 1000 for 10.00).
- * @property {string} currency - Currency code (e.g., "NOK", "DKK", "EUR").
+ * @property {'NOK' | 'DKK' | 'EUR'} currency - Currency code.
  */
 
 /**
  * @typedef {Object} PaymentMethod
- * @property {string} type - The type of payment method (e.g., "WALLET", "CARD").
+ * @property {'WALLET' | 'CARD' | 'CARD_PASSTHROUGH'} type - The type of payment method.
  */
 
 /**
@@ -22,7 +22,7 @@ import { generateUUID } from './utils.js';
  * @property {Amount} amount - The amount to be charged.
  * @property {string} reference - Your unique identifier for the payment (8–64 characters).
  * @property {PaymentMethod} paymentMethod - The payment method type.
- * @property {string} userFlow - The flow for the user (e.g., "WEB_REDIRECT", "PUSH_MESSAGE").
+ * @property {'WEB_REDIRECT' | 'PUSH_MESSAGE' | 'QR' | 'NATIVE_REDIRECT'} userFlow - The flow for the user.
  * @property {string} [returnUrl] - The URL to return to after the payment.
  * @property {string} [paymentDescription] - Description shown to the user.
  * @property {Customer} [customer] - Customer information.
@@ -48,7 +48,7 @@ import { generateUUID } from './utils.js';
 /**
  * @typedef {Object} PaymentDetails
  * @property {string} reference - Your unique identifier for the payment.
- * @property {string} state - The current lifecycle stage (e.g., AUTHORIZED, CAPTURED).
+ * @property {'CREATED' | 'AUTHORIZED' | 'CAPTURED' | 'CANCELLED' | 'REFUNDED' | 'ABORTED' | 'EXPIRED'} state - The current lifecycle stage.
  * @property {Amount} amount - The amount of the payment.
  * @property {PaymentAggregate} aggregate - Summary of all financial actions.
  * @property {PaymentMethod} paymentMethod - The payment method used.
