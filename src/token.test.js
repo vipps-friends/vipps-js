@@ -3,10 +3,10 @@ import assert from 'node:assert';
 import { initializeVipps, getAccessToken } from './index.js';
 
 const config = {
-  clientId: process.env.VIPPS_CLIENT_ID || '',
-  clientSecret: process.env.VIPPS_CLIENT_SECRET || '',
-  subscriptionKey: process.env.VIPPS_SUBSCRIPTION_KEY || '',
-  merchantSerialNumber: process.env.VIPPS_MSN || '',
+  clientId: process.env.VIPPS_CLIENT_ID ?? '',
+  clientSecret: process.env.VIPPS_CLIENT_SECRET ?? '',
+  subscriptionKey: process.env.VIPPS_SUBSCRIPTION_KEY ?? '',
+  merchantSerialNumber: process.env.VIPPS_MSN ?? '',
   useTest: true,
 };
 
