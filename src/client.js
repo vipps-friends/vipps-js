@@ -21,6 +21,7 @@
  * @property {number} _auth.expiresAt - Expiry timestamp in milliseconds.
  */
 
+/** @type {VippsInstance | null} */
 let instance = null
 
 /**
@@ -52,7 +53,7 @@ export function initializeVipps(config) {
 /**
  * Returns the Vipps instance.
  * 
- * @returns {VippsInstance} The Vipps instance.
+ * @returns {VippsInstance | null} The Vipps instance.
  */
 export function getVipps() {
   return instance;

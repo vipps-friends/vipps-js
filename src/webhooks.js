@@ -2,7 +2,7 @@
  * Verifies the integrity and signature of a Vipps MobilePay webhook.
  * 
  * @param {string} rawBody - The raw request body as a string.
- * @param {Object} headers - The request headers.
+ * @param {Record<string, string>} headers - The request headers.
  * @param {string} webhookSecret - The secret for the webhook.
  * @returns {Promise<boolean>} True if the webhook is valid.
  */
@@ -19,7 +19,6 @@ export async function verifyWebhook(rawBody, headers, webhookSecret) {
   const encoder = new TextEncoder();
   const data = encoder.encode(rawBody);
 
-  // 1. Integrity Check: Compare x-ms-content-sha256 with Base64(SHA256(rawBody))
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const calculatedContentSha256 = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
 
@@ -27,8 +26,6 @@ export async function verifyWebhook(rawBody, headers, webhookSecret) {
     return false;
   }
 
-  // 2. Signature Check: Verify HMAC-SHA256 signature
-  // String to sign: {x-ms-date}\n{host}\n{x-ms-content-sha256}
   const stringToSign = `${date}\n${host}\n${contentSha256}`;
   const stringToSignBuffer = encoder.encode(stringToSign);
 

@@ -87,6 +87,7 @@ async function sendRequest(vipps, method, path, body, idempotencyKey) {
     ? 'https://apitest.vippsmobilepay.com' 
     : 'https://api.vippsmobilepay.com';
   
+  /** @type {Record<string, string>} */
   const headers = {
     'Authorization': `Bearer ${token}`,
     'Ocp-Apim-Subscription-Key': vipps.config.subscriptionKey,
