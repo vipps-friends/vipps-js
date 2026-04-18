@@ -44,32 +44,24 @@ async function fetchToken(vipps) {
 export async function getAccessToken(vipps) {
   const now = Date.now();
   
-  // 1. Check internal cache
   if (vipps._auth.token && vipps._auth.expiresAt > now + 60000) {
     return vipps._auth.token;
   }
 
-  // 2. Check external hook if available
   if (vipps.config.getToken) {
     const externalToken = await vipps.config.getToken();
     if (externalToken) {
-      // Assuming external token is a string, we might not know expiry.
-      // If it's an object with expiresAt, we could use it.
       return externalToken;
     }
   }
 
-  // 3. Fetch new token
   const authData = await fetchToken(vipps);
   const token = authData.access_token;
-  // expires_on is a unix timestamp (seconds)
   const expiresAt = parseInt(authData.expires_on) * 1000;
 
-  // 4. Update internal cache
   vipps._auth.token = token;
   vipps._auth.expiresAt = expiresAt;
 
-  // 5. Update external hook if available
   if (vipps.config.setToken) {
     await vipps.config.setToken(authData);
   }
