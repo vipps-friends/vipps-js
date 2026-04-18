@@ -9,11 +9,11 @@
 /**
  * Internal helper to fetch a new token from Vipps.
  * 
- * @param {import('./client.js').VippsInstance} vipps 
+ * @param {import('./vipps.js').VippsInstance} vipps 
  * @returns {Promise<AccessTokenResponse>}
  */
 async function fetchToken(vipps) {
-  const { clientId, clientSecret, subscriptionKey, baseUrl } = vipps.config;
+  const { clientId, clientSecret, subscriptionKey, baseUrl } = vipps;
   
   const response = await fetch(`${baseUrl}/accesstoken/get`, {
     method: 'POST',
@@ -35,18 +35,18 @@ async function fetchToken(vipps) {
 /**
  * Retrieves a valid access token, handling caching and renewal.
  * 
- * @param {import('./client.js').VippsInstance} vipps - The Vipps instance.
+ * @param {import('./vipps.js').VippsInstance} vipps - The Vipps instance.
  * @returns {Promise<string>} The access token.
  */
 export async function getAccessToken(vipps) {
   const now = Date.now();
   
-  if (vipps._auth.token && vipps._auth.expiresAt > now + 60000) {
-    return vipps._auth.token;
+  if (vipps.token && vipps.expiresAt > now + 60000) {
+    return vipps.token;
   }
 
-  if (vipps.config.getToken) {
-    const externalToken = await vipps.config.getToken();
+  if (vipps.getToken) {
+    const externalToken = await vipps.getToken();
     if (externalToken) {
       return externalToken;
     }
@@ -56,11 +56,11 @@ export async function getAccessToken(vipps) {
   const token = authData.access_token;
   const expiresAt = parseInt(authData.expires_on) * 1000;
 
-  vipps._auth.token = token;
-  vipps._auth.expiresAt = expiresAt;
+  vipps.token = token;
+  vipps.expiresAt = expiresAt;
 
-  if (vipps.config.setToken) {
-    await vipps.config.setToken(authData);
+  if (vipps.setToken) {
+    await vipps.setToken(authData);
   }
 
   return token;

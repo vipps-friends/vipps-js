@@ -19,6 +19,6 @@ describe('Vipps Integration Tests', () => {
     assert.ok(token, 'Token should be defined');
     assert.strictEqual(typeof token, 'string', 'Token should be a string');
     assert.ok(token.length > 0, 'Token should not be empty');
-    assert.strictEqual(vipps._auth.token, token, 'Token should be cached in the instance');
+    assert.strictEqual(vipps.token, token, 'Token should be cached in the instance');
   });
 });

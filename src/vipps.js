@@ -17,10 +17,19 @@
 
 /**
  * @typedef {Object} VippsInstance
- * @property {VippsConfig & { baseUrl: string }} config - The library configuration.
- * @property {Object} _auth - Internal state for token caching.
- * @property {string|null} _auth.token - Cached access token.
- * @property {number} _auth.expiresAt - Expiry timestamp in milliseconds.
+ * @property {string} clientId
+ * @property {string} clientSecret
+ * @property {string} subscriptionKey
+ * @property {string} merchantSerialNumber
+ * @property {string} baseUrl
+ * @property {string} [systemName]
+ * @property {string} [systemVersion]
+ * @property {string} [pluginName]
+ * @property {string} [pluginVersion]
+ * @property {Function} [getToken]
+ * @property {Function} [setToken]
+ * @property {string|null} token - Cached access token.
+ * @property {number} expiresAt - Expiry timestamp in milliseconds.
  */
 
 /** @type {VippsInstance | null} */
@@ -42,19 +51,13 @@ export function initializeVipps(config) {
   const useTest = config.useTest ?? false;
   const baseUrlProd = config.baseUrlProd ?? 'https://api.vippsmobilepay.com';
   const baseUrlDev = config.baseUrlDev ?? 'https://apitest.vipps.no';
+  const baseUrl = useTest ? baseUrlDev : baseUrlProd;
 
   instance = {
-    config: {
-      useTest,
-      baseUrlProd,
-      baseUrlDev,
-      baseUrl: useTest ? baseUrlDev : baseUrlProd,
-      ...config,
-    },
-    _auth: {
-      token: null,
-      expiresAt: 0,
-    },
+    ...config,
+    baseUrl,
+    token: null,
+    expiresAt: 0,
   };
 
   return instance;
