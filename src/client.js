@@ -4,7 +4,9 @@
  * @property {string} clientSecret - The Client Secret for the sales unit.
  * @property {string} subscriptionKey - The Subscription Key for the sales unit.
  * @property {string} merchantSerialNumber - Your unique Merchant Serial Number (MSN).
- * @property {boolean} [useTestMode=false] - Whether to use the test environment.
+ * @property {boolean} [useTest=false] - Whether to use the test environment.
+ * @property {string} [baseUrlProd='https://api.vippsmobilepay.com'] - The production base URL.
+ * @property {string} [baseUrlDev='https://apitest.vipps.no'] - The test base URL.
  * @property {string} [systemName] - The name of your ecommerce solution or system.
  * @property {string} [systemVersion] - The version number of your system.
  * @property {string} [pluginName] - The name of the ecommerce plugin.
@@ -15,7 +17,7 @@
 
 /**
  * @typedef {Object} VippsInstance
- * @property {VippsConfig} config - The library configuration.
+ * @property {VippsConfig & { baseUrl: string }} config - The library configuration.
  * @property {Object} _auth - Internal state for token caching.
  * @property {string|null} _auth.token - Cached access token.
  * @property {number} _auth.expiresAt - Expiry timestamp in milliseconds.
@@ -36,9 +38,17 @@ export function initializeVipps(config) {
   if (instance) {
     return instance
   }
+
+  const useTest = config.useTest ?? false;
+  const baseUrlProd = config.baseUrlProd ?? 'https://api.vippsmobilepay.com';
+  const baseUrlDev = config.baseUrlDev ?? 'https://apitest.vipps.no';
+
   instance = {
     config: {
-      useTestMode: false,
+      useTest,
+      baseUrlProd,
+      baseUrlDev,
+      baseUrl: useTest ? baseUrlDev : baseUrlProd,
       ...config,
     },
     _auth: {

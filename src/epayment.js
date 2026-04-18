@@ -83,9 +83,7 @@ import { generateUUID } from './utils.js';
  */
 async function sendRequest(vipps, method, path, body, idempotencyKey) {
   const token = await getAccessToken(vipps);
-  const baseUrl = vipps.config.useTestMode 
-    ? 'https://apitest.vipps.no' 
-    : 'https://api.vippsmobilepay.com';
+  const { baseUrl } = vipps.config;
   
   /** @type {Record<string, string>} */
   const headers = {
