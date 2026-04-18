@@ -7,6 +7,8 @@ This file takes absolute precedence over general defaults.
 - **Native Primitives**: Use native `fetch` and `crypto.subtle` exclusively. DO NOT use Node.js-specific modules (e.g., `crypto`, `http`, `buffer`).
 - **JSDoc over TypeScript**: The source code MUST be written in plain JavaScript with comprehensive JSDoc. TypeScript types MUST be bundled into a single `types.d.ts` file generated from these JSDoc comments.
 - **1-to-1 Mapping**: Maintain a strict 1-to-1 mapping between the Vipps MobilePay API structure and library methods.
+- **File Naming**: Use descriptive names for modules (e.g., `token.js` instead of `auth.js`).
+- **Testing**: Tests MUST be located next to the files they test (e.g., `src/token.test.js` for `src/token.js`). Primary validation must be performed against the real Vipps Merchant Test (MT) environment.
 - **Documentation Fidelity**: Always copy parameter descriptions directly from the official Vipps MobilePay API documentation into the JSDoc.
 
 ## Technical Standards
@@ -16,7 +18,3 @@ This file takes absolute precedence over general defaults.
 - **Idempotency**: Automate `Idempotency-Key` generation (UUID) for all write operations unless explicitly provided by the user.
 - **Comments**: ONLY JSDoc comments (`/** ... */`) are allowed. All other comments (e.g., `//`, `/* ... */`) must be removed or converted to JSDoc if they provide public API value.
 - **OpenAPI Specifications**: Use `npm run download-spec` to fetch the latest OpenAPI specifications from the official Vipps MobilePay documentation for reference.
-
-## Testing & Validation
-- **Integration Tests**: Primary validation must be performed against the real Vipps Merchant Test (MT) environment.
-- **Reproduction**: Bug fixes must be preceded by a reproduction script or test case using the MT environment or a high-fidelity mock.

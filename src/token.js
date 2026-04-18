@@ -15,7 +15,7 @@
 async function fetchToken(vipps) {
   const { clientId, clientSecret, subscriptionKey, useTestMode } = vipps.config;
   const baseUrl = useTestMode 
-    ? 'https://apitest.vippsmobilepay.com' 
+    ? 'https://apitest.vipps.no' 
     : 'https://api.vippsmobilepay.com';
   
   const response = await fetch(`${baseUrl}/accesstoken/get`, {
