@@ -11,7 +11,8 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "typegen": "tsc && dts-bundle-generator -o types.d.ts types/index.d.ts --no-check"
+    "typegen": "tsc && dts-bundle-generator -o types.d.ts types/index.d.ts --no-check",
+    "download-spec": "./scripts/download-openapi.sh"
   },
   "keywords": [
     "vipps",
