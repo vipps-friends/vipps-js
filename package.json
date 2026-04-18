@@ -3,15 +3,15 @@
   "version": "1.0.0",
   "description": "A modern JavaScript library for Vipps MobilePay APIs",
   "main": "src/index.js",
-  "types": "types/index.d.ts",
+  "types": "types.d.ts",
   "type": "module",
   "files": [
     "src",
-    "types"
+    "types.d.ts"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "typegen": "tsc"
+    "typegen": "tsc && dts-bundle-generator -o types.d.ts types/index.d.ts --no-check"
   },
   "keywords": [
     "vipps",
@@ -25,6 +25,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "dts-bundle-generator": "^9.5.1",
     "typescript": "^6.0.3"
   }
 }
