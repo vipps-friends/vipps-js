@@ -1,5 +1,4 @@
 import { getAccessToken } from './token.js';
-import { generateUUID } from './utils.js';
 
 /**
  * @typedef {Object} Amount
@@ -83,16 +82,16 @@ import { generateUUID } from './utils.js';
  */
 async function sendRequest(vipps, method, path, body, idempotencyKey) {
   const token = await getAccessToken(vipps);
-  const { 
-    baseUrl, 
-    subscriptionKey, 
-    merchantSerialNumber, 
-    systemName, 
-    systemVersion, 
-    pluginName, 
-    pluginVersion 
+  const {
+    baseUrl,
+    subscriptionKey,
+    merchantSerialNumber,
+    systemName,
+    systemVersion,
+    pluginName,
+    pluginVersion
   } = vipps;
-  
+
   /** @type {Record<string, string>} */
   const headers = {
     'Authorization': `Bearer ${token}`,
@@ -140,8 +139,7 @@ async function sendRequest(vipps, method, path, body, idempotencyKey) {
  * @returns {Promise<PaymentResponse>} The payment response from Vipps.
  */
 export async function createPayment(vipps, body) {
-  const key = body.reference || generateUUID();
-  return sendRequest(vipps, 'POST', '', body, key);
+  return sendRequest(vipps, 'POST', '', body, body.reference);
 }
 
 /**
