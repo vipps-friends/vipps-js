@@ -48,8 +48,8 @@ export function initializeVipps(config) {
   }
 
   const useTest = config.useTest ?? false
-  const baseUrlProd = config.baseUrlProd ?? "https://api.vippsmobilepay.com"
-  const baseUrlDev = config.baseUrlDev ?? "https://apitest.vipps.no"
+  const baseUrlProd = config.baseUrlProd ?? 'https://api.vippsmobilepay.com'
+  const baseUrlDev = config.baseUrlDev ?? 'https://apitest.vipps.no'
   const baseUrl = useTest ? baseUrlDev : baseUrlProd
 
   instance = {

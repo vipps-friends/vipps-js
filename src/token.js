@@ -16,11 +16,11 @@ async function fetchToken(vipps) {
   const { clientId, clientSecret, subscriptionKey, baseUrl } = vipps
 
   const response = await fetch(`${baseUrl}/accesstoken/get`, {
-    method: "POST",
+    method: 'POST',
     headers: {
       client_id: clientId,
       client_secret: clientSecret,
-      "Ocp-Apim-Subscription-Key": subscriptionKey,
+      'Ocp-Apim-Subscription-Key': subscriptionKey,
     },
   })
 

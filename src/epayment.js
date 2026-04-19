@@ -1,9 +1,9 @@
-import { getAccessToken } from "./token.js"
+import { getAccessToken } from './token.js'
 
 /**
  * @typedef {Object} Amount
  * @property {number} value - Amount in minor units (e.g., 1000 for 10.00).
- * @property {'NOK' | 'DKK' | 'EUR'} currency - Currency code.
+ * @property {"NOK" | "DKK" | "EUR" | "SEK" | "USD" | "GBP"} currency - Currency code.
  */
 
 /**
@@ -94,26 +94,26 @@ async function sendRequest(vipps, method, path, body, idempotencyKey) {
   /** @type {Record<string, string>} */
   const headers = {
     Authorization: `Bearer ${token}`,
-    "Ocp-Apim-Subscription-Key": subscriptionKey,
-    "Merchant-Serial-Number": merchantSerialNumber,
-    "Content-Type": "application/json",
+    'Ocp-Apim-Subscription-Key': subscriptionKey,
+    'Merchant-Serial-Number': merchantSerialNumber,
+    'Content-Type': 'application/json',
   }
 
   if (idempotencyKey) {
-    headers["Idempotency-Key"] = idempotencyKey
+    headers['Idempotency-Key'] = idempotencyKey
   }
 
   if (systemName) {
-    headers["Vipps-System-Name"] = systemName
+    headers['Vipps-System-Name'] = systemName
   }
   if (systemVersion) {
-    headers["Vipps-System-Version"] = systemVersion
+    headers['Vipps-System-Version'] = systemVersion
   }
   if (pluginName) {
-    headers["Vipps-System-Plugin-Name"] = pluginName
+    headers['Vipps-System-Plugin-Name'] = pluginName
   }
   if (pluginVersion) {
-    headers["Vipps-System-Plugin-Version"] = pluginVersion
+    headers['Vipps-System-Plugin-Version'] = pluginVersion
   }
 
   const response = await fetch(`${baseUrl}/epayment/v1/payments${path}`, {
@@ -138,7 +138,7 @@ async function sendRequest(vipps, method, path, body, idempotencyKey) {
  * @returns {Promise<PaymentResponse>} The payment response from Vipps.
  */
 export async function createPayment(vipps, body) {
-  return sendRequest(vipps, "POST", "", body, body.reference)
+  return sendRequest(vipps, 'POST', '', body, body.reference)
 }
 
 /**
@@ -149,7 +149,7 @@ export async function createPayment(vipps, body) {
  * @returns {Promise<PaymentDetails>} The current state of the payment.
  */
 export async function getPayment(vipps, reference) {
-  return sendRequest(vipps, "GET", `/${reference}`)
+  return sendRequest(vipps, 'GET', `/${reference}`)
 }
 
 /**
@@ -161,7 +161,7 @@ export async function getPayment(vipps, reference) {
  * @returns {Promise<AdjustmentResponse>} The capture response.
  */
 export async function capturePayment(vipps, reference, body) {
-  return sendRequest(vipps, "POST", `/${reference}/capture`, body, reference)
+  return sendRequest(vipps, 'POST', `/${reference}/capture`, body, reference)
 }
 
 /**
@@ -172,7 +172,7 @@ export async function capturePayment(vipps, reference, body) {
  * @returns {Promise<AdjustmentResponse>} The cancel response.
  */
 export async function cancelPayment(vipps, reference) {
-  return sendRequest(vipps, "POST", `/${reference}/cancel`, {}, reference)
+  return sendRequest(vipps, 'POST', `/${reference}/cancel`, {}, reference)
 }
 
 /**
@@ -184,5 +184,5 @@ export async function cancelPayment(vipps, reference) {
  * @returns {Promise<AdjustmentResponse>} The refund response.
  */
 export async function refundPayment(vipps, reference, body) {
-  return sendRequest(vipps, "POST", `/${reference}/refund`, body, reference)
+  return sendRequest(vipps, 'POST', `/${reference}/refund`, body, reference)
 }

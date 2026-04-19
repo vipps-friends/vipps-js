@@ -1,56 +1,56 @@
-import { test, describe } from "node:test"
-import assert from "node:assert"
-import { initializeVipps, createPayment, getPayment, cancelPayment } from "./index.js"
+import assert from 'node:assert'
+import { describe, test } from 'node:test'
+import { cancelPayment, createPayment, getPayment, initializeVipps } from './index.js'
 
 const config = {
-  clientId: process.env.VIPPS_CLIENT_ID || "",
-  clientSecret: process.env.VIPPS_CLIENT_SECRET || "",
-  subscriptionKey: process.env.VIPPS_SUBSCRIPTION_KEY || "",
-  merchantSerialNumber: process.env.VIPPS_MSN || "",
+  clientId: process.env.VIPPS_CLIENT_ID || '',
+  clientSecret: process.env.VIPPS_CLIENT_SECRET || '',
+  subscriptionKey: process.env.VIPPS_SUBSCRIPTION_KEY || '',
+  merchantSerialNumber: process.env.VIPPS_MSN || '',
   useTest: true,
 }
 
-describe("ePayment Integration Tests", () => {
+describe('ePayment Integration Tests', () => {
   const vipps = initializeVipps(config)
   const reference = `test-${Date.now()}`
 
-  test("should create, get and cancel a payment", async () => {
+  test('should create, get and cancel a payment', async () => {
     const paymentRequest = {
       amount: {
         value: 1000,
-        currency: "NOK",
+        currency: 'NOK',
       },
       reference,
       paymentMethod: {
-        type: "WALLET",
+        type: 'WALLET',
       },
-      userFlow: "WEB_REDIRECT",
-      returnUrl: "https://example.com/redirect",
-      paymentDescription: "Integration test payment",
+      userFlow: 'WEB_REDIRECT',
+      returnUrl: 'https://example.com/redirect',
+      paymentDescription: 'Integration test payment',
       metadata: {
-        testKey: "testValue",
+        testKey: 'testValue',
       },
     }
 
-    // 1. Create payment
     const createResponse = await createPayment(vipps, paymentRequest)
     assert.strictEqual(createResponse.reference, reference)
-    assert.ok(createResponse.redirectUrl, "Should have a redirectUrl")
+    assert.ok(createResponse.redirectUrl, 'Should have a redirectUrl')
 
-    // 2. Get payment details and verify fields
     const details = await getPayment(vipps, reference)
     assert.strictEqual(details.reference, reference)
-    assert.strictEqual(details.state, "CREATED")
+    assert.strictEqual(details.state, 'CREATED')
     assert.strictEqual(details.amount.value, 1000)
-    assert.strictEqual(details.amount.currency, "NOK")
-    assert.strictEqual(details.paymentMethod.type, "WALLET")
+    assert.strictEqual(details.amount.currency, 'NOK')
+    assert.strictEqual(details.paymentMethod.type, 'WALLET')
 
-    // 3. Cancel the payment
     const cancelResponse = await cancelPayment(vipps, reference)
-    assert.ok(cancelResponse.aggregate, "Should return aggregate in response")
+    assert.ok(cancelResponse.aggregate, 'Should return aggregate in response')
 
-    // 4. Verify cancelled state
     const cancelledDetails = await getPayment(vipps, reference)
-    assert.strictEqual(cancelledDetails.state, "TERMINATED", "Payment should be TERMINATED after cancel")
+    assert.strictEqual(
+      cancelledDetails.state,
+      'TERMINATED',
+      'Payment should be TERMINATED after cancel',
+    )
   })
 })

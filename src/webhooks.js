@@ -7,9 +7,9 @@
  * @returns {Promise<boolean>} True if the webhook is valid.
  */
 export async function verifyWebhook(rawBody, headers, webhookSecret) {
-  const contentSha256 = headers["x-ms-content-sha256"]
-  const signature = headers["x-ms-signature"]
-  const date = headers["x-ms-date"]
+  const contentSha256 = headers['x-ms-content-sha256']
+  const signature = headers['x-ms-signature']
+  const date = headers['x-ms-date']
   const host = headers.host
 
   if (!contentSha256 || !signature || !date || !host) {
@@ -19,7 +19,7 @@ export async function verifyWebhook(rawBody, headers, webhookSecret) {
   const encoder = new TextEncoder()
   const data = encoder.encode(rawBody)
 
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
   const calculatedContentSha256 = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)))
 
   if (contentSha256 !== calculatedContentSha256) {
@@ -31,14 +31,14 @@ export async function verifyWebhook(rawBody, headers, webhookSecret) {
 
   const keyBuffer = encoder.encode(webhookSecret)
   const key = await crypto.subtle.importKey(
-    "raw",
+    'raw',
     keyBuffer,
-    { name: "HMAC", hash: "SHA-256" },
+    { name: 'HMAC', hash: 'SHA-256' },
     false,
-    ["verify"],
+    ['verify'],
   )
 
   const signatureBuffer = Uint8Array.from(atob(signature), (c) => c.charCodeAt(0))
 
-  return crypto.subtle.verify("HMAC", key, signatureBuffer, stringToSignBuffer)
+  return crypto.subtle.verify('HMAC', key, signatureBuffer, stringToSignBuffer)
 }
