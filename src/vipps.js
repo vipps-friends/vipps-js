@@ -53,6 +53,8 @@ export function initializeVipps(config) {
   const baseUrl = useTest ? baseUrlDev : baseUrlProd
 
   instance = {
+    pluginName: '@vipps-friends/vipps-js',
+    pluginVersion: '1.0.0',
     ...config,
     baseUrl,
     expiresAt: 0,
