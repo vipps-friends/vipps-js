@@ -1,0 +1,59 @@
+{
+  "author": "Robert Sasak",
+  "description": "A modern JavaScript library for Vipps MobilePay APIs",
+  "devDependencies": {
+    "@biomejs/biome": "2.4.12",
+    "@commitlint/cli": "20.5.0",
+    "@commitlint/config-conventional": "20.5.0",
+    "@semantic-release/commit-analyzer": "13.0.1",
+    "@semantic-release/github": "12.0.6",
+    "@semantic-release/npm": "13.1.5",
+    "@semantic-release/release-notes-generator": "14.1.0",
+    "@types/node": "25.6.0",
+    "semantic-release": "25.0.3",
+    "typescript": "6.0.3"
+  },
+  "files": [
+    "src",
+    "types"
+  ],
+  "keywords": [
+    "vipps",
+    "mobilepay",
+    "payments",
+    "javascript",
+    "node.js",
+    "deno",
+    "bun"
+  ],
+  "license": "MIT",
+  "main": "src/index.js",
+  "name": "@vipps-friends/vipps-js",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "release": {
+    "branches": [
+      "main"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vipps-friends/vipps-js.git"
+  },
+  "scripts": {
+    "check": "biome check",
+    "check:write": "biome check --write .",
+    "download-spec": "./scripts/download-openapi.sh",
+    "format": "biome format .",
+    "format:write": "biome format --write .",
+    "lint": "biome lint .",
+    "lint:write": "biome lint --write .",
+    "test": "node --env-file-if-exists=.env.local --test src/**/*.test.js",
+    "typegen": "tsc"
+  },
+  "type": "module",
+  "types": "types/index.d.ts",
+  "version": "1.0.0"
+}
