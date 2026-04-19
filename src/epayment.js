@@ -33,7 +33,6 @@ import { getAccessToken } from "./token.js"
  * @typedef {Object} PaymentResponse
  * @property {string} reference - Your unique identifier for the payment.
  * @property {string} redirectUrl - The URL where the user is redirected to.
- * @property {string} paymentId - The unique ID for the payment.
  */
 
 /**
@@ -47,7 +46,7 @@ import { getAccessToken } from "./token.js"
 /**
  * @typedef {Object} PaymentDetails
  * @property {string} reference - Your unique identifier for the payment.
- * @property {'CREATED' | 'AUTHORIZED' | 'CAPTURED' | 'CANCELLED' | 'REFUNDED' | 'ABORTED' | 'EXPIRED'} state - The current lifecycle stage.
+ * @property {'CREATED' | 'AUTHORIZED' | 'CAPTURED' | 'CANCELLED' | 'REFUNDED' | 'ABORTED' | 'EXPIRED' | 'TERMINATED'} state - The current lifecycle stage.
  * @property {Amount} amount - The amount of the payment.
  * @property {PaymentAggregate} aggregate - Summary of all financial actions.
  * @property {PaymentMethod} paymentMethod - The payment method used.
