@@ -1,4 +1,4 @@
-import { getAccessToken } from './token.js';
+import { getAccessToken } from "./token.js"
 
 /**
  * @typedef {Object} Amount
@@ -72,16 +72,16 @@ import { getAccessToken } from './token.js';
 
 /**
  * Internal helper to send a request to the ePayment API.
- * 
- * @param {import('./vipps.js').VippsInstance} vipps 
- * @param {string} method 
- * @param {string} path 
- * @param {Object} [body] 
- * @param {string} [idempotencyKey] 
+ *
+ * @param {import('./vipps.js').VippsInstance} vipps
+ * @param {string} method
+ * @param {string} path
+ * @param {Object} [body]
+ * @param {string} [idempotencyKey]
  * @returns {Promise<any>}
  */
 async function sendRequest(vipps, method, path, body, idempotencyKey) {
-  const token = await getAccessToken(vipps);
+  const token = await getAccessToken(vipps)
   const {
     baseUrl,
     subscriptionKey,
@@ -89,101 +89,101 @@ async function sendRequest(vipps, method, path, body, idempotencyKey) {
     systemName,
     systemVersion,
     pluginName,
-    pluginVersion
-  } = vipps;
+    pluginVersion,
+  } = vipps
 
   /** @type {Record<string, string>} */
   const headers = {
-    'Authorization': `Bearer ${token}`,
-    'Ocp-Apim-Subscription-Key': subscriptionKey,
-    'Merchant-Serial-Number': merchantSerialNumber,
-    'Content-Type': 'application/json',
-  };
+    Authorization: `Bearer ${token}`,
+    "Ocp-Apim-Subscription-Key": subscriptionKey,
+    "Merchant-Serial-Number": merchantSerialNumber,
+    "Content-Type": "application/json",
+  }
 
   if (idempotencyKey) {
-    headers['Idempotency-Key'] = idempotencyKey;
+    headers["Idempotency-Key"] = idempotencyKey
   }
 
   if (systemName) {
-    headers['Vipps-System-Name'] = systemName;
+    headers["Vipps-System-Name"] = systemName
   }
   if (systemVersion) {
-    headers['Vipps-System-Version'] = systemVersion;
+    headers["Vipps-System-Version"] = systemVersion
   }
   if (pluginName) {
-    headers['Vipps-System-Plugin-Name'] = pluginName;
+    headers["Vipps-System-Plugin-Name"] = pluginName
   }
   if (pluginVersion) {
-    headers['Vipps-System-Plugin-Version'] = pluginVersion;
+    headers["Vipps-System-Plugin-Version"] = pluginVersion
   }
 
   const response = await fetch(`${baseUrl}/epayment/v1/payments${path}`, {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
-  });
+  })
 
   if (!response.ok) {
-    const errorBody = await response.json().catch(() => ({}));
-    throw { status: response.status, ...errorBody };
+    const errorBody = await response.json().catch(() => ({}))
+    throw { status: response.status, ...errorBody }
   }
 
-  return response.json();
+  return response.json()
 }
 
 /**
  * Initiates a new payment session.
- * 
+ *
  * @param {import('./vipps.js').VippsInstance} vipps - The Vipps instance.
  * @param {CreatePaymentRequest} body - The payment request body.
  * @returns {Promise<PaymentResponse>} The payment response from Vipps.
  */
 export async function createPayment(vipps, body) {
-  return sendRequest(vipps, 'POST', '', body, body.reference);
+  return sendRequest(vipps, "POST", "", body, body.reference)
 }
 
 /**
  * Retrieves the current status and details of a payment.
- * 
+ *
  * @param {import('./vipps.js').VippsInstance} vipps - The Vipps instance.
  * @param {string} reference - The unique identifier for the payment.
  * @returns {Promise<PaymentDetails>} The current state of the payment.
  */
 export async function getPayment(vipps, reference) {
-  return sendRequest(vipps, 'GET', `/${reference}`);
+  return sendRequest(vipps, "GET", `/${reference}`)
 }
 
 /**
  * Captures a previously authorized payment.
- * 
+ *
  * @param {import('./vipps.js').VippsInstance} vipps - The Vipps instance.
  * @param {string} reference - The unique identifier for the payment.
  * @param {CapturePaymentRequest} body - The capture request body.
  * @returns {Promise<AdjustmentResponse>} The capture response.
  */
 export async function capturePayment(vipps, reference, body) {
-  return sendRequest(vipps, 'POST', `/${reference}/capture`, body, reference);
+  return sendRequest(vipps, "POST", `/${reference}/capture`, body, reference)
 }
 
 /**
  * Cancels an authorized payment that hasn't been captured yet.
- * 
+ *
  * @param {import('./vipps.js').VippsInstance} vipps - The Vipps instance.
  * @param {string} reference - The unique identifier for the payment.
  * @returns {Promise<AdjustmentResponse>} The cancel response.
  */
 export async function cancelPayment(vipps, reference) {
-  return sendRequest(vipps, 'POST', `/${reference}/cancel`, {}, reference);
+  return sendRequest(vipps, "POST", `/${reference}/cancel`, {}, reference)
 }
 
 /**
  * Refunds a previously captured payment.
- * 
+ *
  * @param {import('./vipps.js').VippsInstance} vipps - The Vipps instance.
  * @param {string} reference - The unique identifier for the payment.
  * @param {RefundPaymentRequest} body - The refund request body.
  * @returns {Promise<AdjustmentResponse>} The refund response.
  */
 export async function refundPayment(vipps, reference, body) {
-  return sendRequest(vipps, 'POST', `/${reference}/refund`, body, reference);
+  return sendRequest(vipps, "POST", `/${reference}/refund`, body, reference)
 }

@@ -12,7 +12,10 @@
   "scripts": {
     "test": "node --env-file=.env.local --test src/**/*.test.js",
     "typegen": "tsc",
-    "download-spec": "./scripts/download-openapi.sh"
+    "download-spec": "./scripts/download-openapi.sh",
+    "format": "biome format --write .",
+    "lint": "biome lint --write .",
+    "check": "biome check --write ."
   },
   "keywords": [
     "vipps",
@@ -26,6 +29,7 @@
   "author": "Robert Sasak",
   "license": "MIT",
   "devDependencies": {
+    "@biomejs/biome": "2.4.12",
     "@types/node": "^22.13.0",
     "typescript": "^5.7.3"
   }

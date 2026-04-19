@@ -38,36 +38,35 @@ let instance = null
 /**
  * Initializes a Vipps instance with the provided configuration.
  * This instance should be passed as the first argument to all other library functions.
- * 
+ *
  * @param {VippsConfig} config - The library configuration.
  * @returns {VippsInstance} An instance to be passed to all other functions.
  */
 export function initializeVipps(config) {
-
   if (instance) {
     return instance
   }
 
-  const useTest = config.useTest ?? false;
-  const baseUrlProd = config.baseUrlProd ?? 'https://api.vippsmobilepay.com';
-  const baseUrlDev = config.baseUrlDev ?? 'https://apitest.vipps.no';
-  const baseUrl = useTest ? baseUrlDev : baseUrlProd;
+  const useTest = config.useTest ?? false
+  const baseUrlProd = config.baseUrlProd ?? "https://api.vippsmobilepay.com"
+  const baseUrlDev = config.baseUrlDev ?? "https://apitest.vipps.no"
+  const baseUrl = useTest ? baseUrlDev : baseUrlProd
 
   instance = {
     ...config,
     baseUrl,
     token: null,
     expiresAt: 0,
-  };
+  }
 
-  return instance;
+  return instance
 }
 
 /**
  * Returns the Vipps instance.
- * 
+ *
  * @returns {VippsInstance | null} The Vipps instance.
  */
 export function getVipps() {
-  return instance;
+  return instance
 }
