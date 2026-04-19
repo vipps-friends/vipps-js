@@ -10,7 +10,7 @@ const config = {
   useTest: true,
 }
 
-describe('Vipps Integration Tests', () => {
+describe('Token', () => {
   const vipps = initializeVipps(config)
 
   test('should fetch an access token from Vipps MT environment', async () => {

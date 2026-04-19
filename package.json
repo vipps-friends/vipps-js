@@ -50,7 +50,7 @@
     "format:write": "biome format --write .",
     "lint": "biome lint .",
     "lint:write": "biome lint --write .",
-    "test": "node --env-file=.env.local --test src/**/*.test.js",
+    "test": "node --env-file-if-exists=.env.local --test src/**/*.test.js",
     "typegen": "tsc"
   },
   "type": "module",

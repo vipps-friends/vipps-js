@@ -10,7 +10,7 @@ const config = {
   useTest: true,
 }
 
-describe('ePayment Integration Tests', () => {
+describe('ePayment', () => {
   const vipps = initializeVipps(config)
   const reference = `test-${Date.now()}`
 
