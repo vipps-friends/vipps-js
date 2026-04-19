@@ -28,6 +28,7 @@
     "format": "biome format --write .",
     "lint": "biome lint --write .",
     "test": "node --env-file=.env.local --test src/**/*.test.js",
+    "test:all": "npm run check && npm run format && npm run lint && npm run test",
     "test:watch": "node --env-file=.env.local --test --watch src/**/*.test.js",
     "typegen": "tsc"
   },

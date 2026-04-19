@@ -1,9 +1,14 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.4.12/schema.json",
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on",
+        "useSortedKeys": "on",
+        "useSortedProperties": "on"
+      }
+    },
+    "enabled": true
   },
   "formatter": {
     "enabled": true,
@@ -13,21 +18,16 @@
   },
   "javascript": {
     "formatter": {
-      "semicolons": "asNeeded",
-      "quoteStyle": "single"
+      "quoteStyle": "single",
+      "semicolons": "asNeeded"
     }
   },
   "linter": {
     "enabled": true
   },
-  "assist": {
+  "vcs": {
+    "clientKind": "git",
     "enabled": true,
-    "actions": {
-      "source": {
-        "organizeImports": "on",
-        "useSortedKeys": "on",
-        "useSortedProperties": "on"
-      }
-    }
+    "useIgnoreFile": true
   }
 }
