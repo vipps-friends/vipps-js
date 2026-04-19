@@ -23,23 +23,23 @@ npm install @vipps-friends/vipps-js
 ### 1. Initialize the client
 
 ```javascript
-import { initializeVipps } from '@vipps-friends/vipps-js';
+import { initializeVipps } from '@vipps-friends/vipps-js'
 
-const vipps = initializeVipps({
+initializeVipps({
   clientId: 'your-client-id',
   clientSecret: 'your-client-secret',
   subscriptionKey: 'your-subscription-key',
   merchantSerialNumber: 'your-msn',
   useTest: true, // Set to false for production
-});
+})
 ```
 
 ### 2. Create a Payment
 
 ```javascript
-import { createPayment } from '@vipps-friends/vipps-js';
+import { createPayment, getVipps } from '@vipps-friends/vipps-js'
 
-const payment = await createPayment(vipps, {
+const payment = await createPayment(getVipps(), {
   amount: {
     value: 1000, // 10.00 NOK
     currency: 'NOK',
@@ -51,20 +51,20 @@ const payment = await createPayment(vipps, {
   userFlow: 'WEB_REDIRECT',
   returnUrl: 'https://your-store.com/callback',
   paymentDescription: 'One pair of cozy socks',
-});
+})
 
-console.log('Redirect the user here:', payment.redirectUrl);
+console.log('Redirect the user here:', payment.redirectUrl)
 ```
 
 ### 3. Get Payment Status
 
 ```javascript
-import { getPayment } from '@vipps-friends/vipps-js';
+import { getPayment, getVipps } from '@vipps-friends/vipps-js'
 
-const details = await getPayment(vipps, 'order-12345');
+const details = await getPayment(getVipps(), 'order-12345')
 
 if (details.state === 'AUTHORIZED') {
-  console.log('Payment is authorized!');
+  console.log('Payment is authorized!')
 }
 ```
 
