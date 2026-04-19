@@ -1,0 +1,25 @@
+name: Test
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run check
+      - run: npm run typegen
+      - run: npm test
+        env:
+          VIPPS_CLIENT_ID: ${{ secrets.VIPPS_CLIENT_ID }}
+          VIPPS_CLIENT_SECRET: ${{ secrets.VIPPS_CLIENT_SECRET }}
+          VIPPS_SUBSCRIPTION_KEY: ${{ secrets.VIPPS_SUBSCRIPTION_KEY }}
+          VIPPS_MSN: ${{ secrets.VIPPS_MSN }}

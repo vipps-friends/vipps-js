@@ -2,8 +2,15 @@
   "author": "Robert Sasak",
   "description": "A modern JavaScript library for Vipps MobilePay APIs",
   "devDependencies": {
-    "@biomejs/biome": "2.4.12",
+    "@biomejs/biome": "1.9.4",
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
+    "@semantic-release/commit-analyzer": "^13.0.0",
+    "@semantic-release/github": "^11.0.1",
+    "@semantic-release/npm": "^12.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.0",
     "@types/node": "^22.13.0",
+    "semantic-release": "^24.2.3",
     "typescript": "^5.7.3"
   },
   "files": [
@@ -21,15 +28,25 @@
   ],
   "license": "MIT",
   "main": "src/index.js",
-  "name": "vipps-js",
+  "name": "@vipps-friends/vipps-js",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "release": {
+    "branches": [
+      "main"
+    ]
+  },
+  "repository": {
+    "url": "https://github.com/vipps-friends/vipps-js"
+  },
   "scripts": {
     "check": "biome check --write .",
     "download-spec": "./scripts/download-openapi.sh",
     "format": "biome format --write .",
     "lint": "biome lint --write .",
     "test": "node --env-file=.env.local --test src/**/*.test.js",
-    "test:all": "npm run check && npm run format && npm run lint && npm run test",
-    "test:watch": "node --env-file=.env.local --test --watch src/**/*.test.js",
     "typegen": "tsc"
   },
   "type": "module",
