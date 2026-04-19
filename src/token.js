@@ -1,9 +1,9 @@
 /**
  * @typedef {Object} AccessTokenResponse
- * @property {string} token_type - Always "Bearer".
- * @property {number} expires_in - Validity period in seconds.
- * @property {string} expires_on - Expiry time as a Unix timestamp (UTC).
- * @property {string} access_token - The JWT (JSON Web Token).
+ * @property {string} token_type - The type for the access token. This will always be `Bearer`.
+ * @property {number} expires_in - Token expiry time in seconds. The access token is valid for 1 hour in the test environment and 24 hours in the production environment.
+ * @property {string} expires_on - Token expiry time in epoch time format.
+ * @property {string} access_token - The access token itself. It is a base64-encoded string, typically 1000+ characters. It can be decoded on https://jwt.io, and using standard libraries. See the documentation for details.
  */
 
 /**
