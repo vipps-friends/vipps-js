@@ -55,8 +55,8 @@ export function initializeVipps(config) {
   instance = {
     ...config,
     baseUrl,
-    token: null,
     expiresAt: 0,
+    token: null,
   }
 
   return instance

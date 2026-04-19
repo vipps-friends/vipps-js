@@ -18,9 +18,16 @@
     }
   },
   "linter": {
+    "enabled": true
+  },
+  "assist": {
     "enabled": true,
-    "rules": {
-      "recommended": true
+    "actions": {
+      "source": {
+        "organizeImports": "on",
+        "useSortedKeys": "on",
+        "useSortedProperties": "on"
+      }
     }
   }
 }

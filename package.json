@@ -1,22 +1,15 @@
 {
-  "name": "vipps-js",
-  "version": "1.0.0",
+  "author": "Robert Sasak",
   "description": "A modern JavaScript library for Vipps MobilePay APIs",
-  "main": "src/index.js",
-  "types": "types/index.d.ts",
-  "type": "module",
+  "devDependencies": {
+    "@biomejs/biome": "2.4.12",
+    "@types/node": "^22.13.0",
+    "typescript": "^5.7.3"
+  },
   "files": [
     "src",
     "types"
   ],
-  "scripts": {
-    "test": "node --env-file=.env.local --test src/**/*.test.js",
-    "typegen": "tsc",
-    "download-spec": "./scripts/download-openapi.sh",
-    "format": "biome format --write .",
-    "lint": "biome lint --write .",
-    "check": "biome check --write ."
-  },
   "keywords": [
     "vipps",
     "mobilepay",
@@ -26,11 +19,19 @@
     "deno",
     "bun"
   ],
-  "author": "Robert Sasak",
   "license": "MIT",
-  "devDependencies": {
-    "@biomejs/biome": "2.4.12",
-    "@types/node": "^22.13.0",
-    "typescript": "^5.7.3"
-  }
+  "main": "src/index.js",
+  "name": "vipps-js",
+  "scripts": {
+    "check": "biome check --write .",
+    "download-spec": "./scripts/download-openapi.sh",
+    "format": "biome format --write .",
+    "lint": "biome lint --write .",
+    "test": "node --env-file=.env.local --test src/**/*.test.js",
+    "test:watch": "node --env-file=.env.local --test --watch src/**/*.test.js",
+    "typegen": "tsc"
+  },
+  "type": "module",
+  "types": "types/index.d.ts",
+  "version": "1.0.0"
 }

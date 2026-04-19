@@ -94,9 +94,9 @@ async function sendRequest(vipps, method, path, body, idempotencyKey) {
   /** @type {Record<string, string>} */
   const headers = {
     Authorization: `Bearer ${token}`,
-    'Ocp-Apim-Subscription-Key': subscriptionKey,
-    'Merchant-Serial-Number': merchantSerialNumber,
     'Content-Type': 'application/json',
+    'Merchant-Serial-Number': merchantSerialNumber,
+    'Ocp-Apim-Subscription-Key': subscriptionKey,
   }
 
   if (idempotencyKey) {
@@ -117,9 +117,9 @@ async function sendRequest(vipps, method, path, body, idempotencyKey) {
   }
 
   const response = await fetch(`${baseUrl}/epayment/v1/payments${path}`, {
-    method,
-    headers,
     body: body ? JSON.stringify(body) : undefined,
+    headers,
+    method,
   })
 
   if (!response.ok) {

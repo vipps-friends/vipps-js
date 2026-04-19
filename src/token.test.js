@@ -5,8 +5,8 @@ import { getAccessToken, initializeVipps } from './index.js'
 const config = {
   clientId: process.env.VIPPS_CLIENT_ID ?? '',
   clientSecret: process.env.VIPPS_CLIENT_SECRET ?? '',
-  subscriptionKey: process.env.VIPPS_SUBSCRIPTION_KEY ?? '',
   merchantSerialNumber: process.env.VIPPS_MSN ?? '',
+  subscriptionKey: process.env.VIPPS_SUBSCRIPTION_KEY ?? '',
   useTest: true,
 }
 
