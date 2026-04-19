@@ -28,8 +28,8 @@
  * @property {string} [pluginVersion]
  * @property {Function} [getToken]
  * @property {Function} [setToken]
- * @property {string|null} token - Cached access token.
- * @property {number} expiresAt - Expiry timestamp in milliseconds.
+ * @property {string|null} token
+ * @property {number} expiresAt
  */
 
 /** @type {VippsInstance | null} */

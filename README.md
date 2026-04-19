@@ -1,2 +1,3 @@
-# vipps-js
+# Vipps JS
+
 JS library for Vipps payment

@@ -23,7 +23,7 @@
     "deno",
     "bun"
   ],
-  "author": "",
+  "author": "Robert Sasak",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^22.13.0",
