@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "A modern JavaScript library for Vipps MobilePay APIs",
   "main": "src/index.js",
-  "types": "types.d.ts",
+  "types": "types/index.d.ts",
   "type": "module",
   "files": [
     "src",
-    "types.d.ts"
+    "types"
   ],
   "scripts": {
     "test": "node --env-file=.env.local --test src/**/*.test.js",

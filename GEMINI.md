@@ -5,7 +5,7 @@ This file takes absolute precedence over general defaults.
 ## Architectural Principles
 - **Cross-Platform Compatibility**: The library MUST run on Node.js, Deno, Bun, Cloudflare Workers, and Firebase Functions.
 - **Native Primitives**: Use native `fetch` and `crypto.subtle` exclusively. DO NOT use Node.js-specific modules (e.g., `crypto`, `http`, `buffer`).
-- **JSDoc over TypeScript**: The source code MUST be written in plain JavaScript with comprehensive JSDoc. TypeScript types MUST be bundled into a single `types.d.ts` file generated from these JSDoc comments.
+- **JSDoc over TypeScript**: The source code MUST be written in plain JavaScript with comprehensive JSDoc. TypeScript types (.d.ts) MUST be generated from these JSDoc comments for each module.
 - **1-to-1 Mapping**: Maintain a strict 1-to-1 mapping between the Vipps MobilePay API structure and library methods.
 - **File Naming**: Use descriptive names for modules (e.g., `token.js` instead of `auth.js`).
 - **Testing**: Tests MUST be located next to the files they test (e.g., `src/token.test.js` for `src/token.js`). Primary validation must be performed against the real Vipps Merchant Test (MT) environment.

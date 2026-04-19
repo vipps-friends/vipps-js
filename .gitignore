@@ -1,5 +1,4 @@
 node_modules
 types
-types.d.ts
 docs/openapi
 .env.local
