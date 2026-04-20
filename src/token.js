@@ -1,3 +1,5 @@
+import { request } from './common.js'
+
 /**
  * @typedef {Object} AccessTokenResponse
  * @property {string} token_type - The type for the access token. This will always be `Bearer`.
@@ -10,61 +12,50 @@
  */
 
 /**
- * Internal helper to fetch a new token from Vipps.
- *
- * @param {import('./vipps.js').VippsInstance} vipps
- * @returns {Promise<AccessTokenResponse>}
- */
-async function fetchToken(vipps) {
-  const { clientId, clientSecret, subscriptionKey, baseUrl } = vipps
-
-  const response = await fetch(`${baseUrl}/accesstoken/get`, {
-    headers: {
-      client_id: clientId,
-      client_secret: clientSecret,
-      'Ocp-Apim-Subscription-Key': subscriptionKey,
-    },
-    method: 'POST',
-  })
-
-  if (!response.ok) {
-    const errorBody = await response.json().catch(() => ({}))
-    throw { status: response.status, ...errorBody }
-  }
-
-  return response.json()
-}
-
-/**
  * Retrieves a valid access token, handling caching and renewal.
  *
  * @param {import('./vipps.js').VippsInstance} vipps - The Vipps instance.
  * @returns {Promise<string>} The access token.
  */
 export async function getAccessToken(vipps) {
+  const {
+    token: cachedToken,
+    expiresOn,
+    getToken,
+    setToken,
+    clientId,
+    clientSecret,
+    baseUrl,
+  } = vipps
   const now = Date.now()
 
-  if (vipps.token && vipps.expiresAt > now + 60000) {
-    return vipps.token
+  if (cachedToken && expiresOn > now + 60000) {
+    return cachedToken
   }
 
-  if (vipps.getToken) {
-    const externalToken = await vipps.getToken()
+  if (getToken) {
+    const externalToken = await getToken()
     if (externalToken) {
       return externalToken
     }
   }
 
-  const authData = await fetchToken(vipps)
-  const token = authData.access_token
-  const expiresAt = parseInt(authData.expires_on, 10) * 1000
+  /** @type {AccessTokenResponse} */
+  const response = await request(vipps, 'POST', `${baseUrl}/accesstoken/get`, {
+    headers: {
+      client_id: clientId,
+      client_secret: clientSecret,
+    },
+  })
 
-  vipps.token = token
-  vipps.expiresAt = expiresAt
+  const { access_token, expires_on } = response
 
-  if (vipps.setToken) {
-    await vipps.setToken(authData)
+  vipps.token = access_token
+  vipps.expiresOn = parseInt(expires_on, 10) * 1000
+
+  if (setToken) {
+    await setToken(response)
   }
 
-  return token
+  return vipps.token
 }

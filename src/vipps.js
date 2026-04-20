@@ -24,12 +24,12 @@
  * @property {string} baseUrl
  * @property {string} [systemName]
  * @property {string} [systemVersion]
- * @property {string} [pluginName]
- * @property {string} [pluginVersion]
+ * @property {string} pluginName
+ * @property {string} pluginVersion
  * @property {Function} [getToken]
  * @property {Function} [setToken]
  * @property {string|null} token - Cached access token.
- * @property {number} expiresAt - Expiry timestamp in milliseconds.
+ * @property {number} expiresOn - Expiry timestamp in milliseconds.
  */
 
 /** @type {VippsInstance | null} */
@@ -57,7 +57,7 @@ export function initializeVipps(config) {
     pluginVersion: '1.0.0',
     ...config,
     baseUrl,
-    expiresAt: 0,
+    expiresOn: 0,
     token: null,
   }
 

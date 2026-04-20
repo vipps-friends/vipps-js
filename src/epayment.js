@@ -1,3 +1,4 @@
+import { request } from './common.js'
 import { getAccessToken } from './token.js'
 
 /**
@@ -70,67 +71,6 @@ import { getAccessToken } from './token.js'
  */
 
 /**
- * Internal helper to send a request to the ePayment API.
- *
- * @param {import('./vipps.js').VippsInstance} vipps
- * @param {string} method
- * @param {string} path
- * @param {Object} [body]
- * @param {string} [idempotencyKey]
- * @returns {Promise<any>}
- */
-async function sendRequest(vipps, method, path, body, idempotencyKey) {
-  const token = await getAccessToken(vipps)
-  const {
-    baseUrl,
-    subscriptionKey,
-    merchantSerialNumber,
-    systemName,
-    systemVersion,
-    pluginName,
-    pluginVersion,
-  } = vipps
-
-  /** @type {Record<string, string>} */
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json',
-    'Merchant-Serial-Number': merchantSerialNumber,
-    'Ocp-Apim-Subscription-Key': subscriptionKey,
-  }
-
-  if (idempotencyKey) {
-    headers['Idempotency-Key'] = idempotencyKey
-  }
-
-  if (systemName) {
-    headers['Vipps-System-Name'] = systemName
-  }
-  if (systemVersion) {
-    headers['Vipps-System-Version'] = systemVersion
-  }
-  if (pluginName) {
-    headers['Vipps-System-Plugin-Name'] = pluginName
-  }
-  if (pluginVersion) {
-    headers['Vipps-System-Plugin-Version'] = pluginVersion
-  }
-
-  const response = await fetch(`${baseUrl}/epayment/v1/payments${path}`, {
-    body: body ? JSON.stringify(body) : undefined,
-    headers,
-    method,
-  })
-
-  if (!response.ok) {
-    const errorBody = await response.json().catch(() => ({}))
-    throw { status: response.status, ...errorBody }
-  }
-
-  return response.json()
-}
-
-/**
  * Initiates a new payment session.
  *
  * @param {import('./vipps.js').VippsInstance} vipps - The Vipps instance.
@@ -138,7 +78,17 @@ async function sendRequest(vipps, method, path, body, idempotencyKey) {
  * @returns {Promise<PaymentResponse>} The payment response from Vipps.
  */
 export async function createPayment(vipps, body) {
-  return sendRequest(vipps, 'POST', '', body, body.reference)
+  const token = await getAccessToken(vipps)
+  const { baseUrl } = vipps
+  const { reference } = body
+
+  return request(vipps, 'POST', `${baseUrl}/epayment/v1/payments`, {
+    body,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Idempotency-Key': reference,
+    },
+  })
 }
 
 /**
@@ -149,7 +99,14 @@ export async function createPayment(vipps, body) {
  * @returns {Promise<PaymentDetails>} The current state of the payment.
  */
 export async function getPayment(vipps, reference) {
-  return sendRequest(vipps, 'GET', `/${reference}`)
+  const token = await getAccessToken(vipps)
+  const { baseUrl } = vipps
+
+  return request(vipps, 'GET', `${baseUrl}/epayment/v1/payments/${reference}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
 }
 
 /**
@@ -161,7 +118,16 @@ export async function getPayment(vipps, reference) {
  * @returns {Promise<AdjustmentResponse>} The capture response.
  */
 export async function capturePayment(vipps, reference, body) {
-  return sendRequest(vipps, 'POST', `/${reference}/capture`, body, reference)
+  const token = await getAccessToken(vipps)
+  const { baseUrl } = vipps
+
+  return request(vipps, 'POST', `${baseUrl}/epayment/v1/payments/${reference}/capture`, {
+    body,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Idempotency-Key': reference,
+    },
+  })
 }
 
 /**
@@ -172,7 +138,15 @@ export async function capturePayment(vipps, reference, body) {
  * @returns {Promise<AdjustmentResponse>} The cancel response.
  */
 export async function cancelPayment(vipps, reference) {
-  return sendRequest(vipps, 'POST', `/${reference}/cancel`, {}, reference)
+  const token = await getAccessToken(vipps)
+  const { baseUrl } = vipps
+
+  return request(vipps, 'POST', `${baseUrl}/epayment/v1/payments/${reference}/cancel`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Idempotency-Key': reference,
+    },
+  })
 }
 
 /**
@@ -184,5 +158,14 @@ export async function cancelPayment(vipps, reference) {
  * @returns {Promise<AdjustmentResponse>} The refund response.
  */
 export async function refundPayment(vipps, reference, body) {
-  return sendRequest(vipps, 'POST', `/${reference}/refund`, body, reference)
+  const token = await getAccessToken(vipps)
+  const { baseUrl } = vipps
+
+  return request(vipps, 'POST', `${baseUrl}/epayment/v1/payments/${reference}/refund`, {
+    body,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Idempotency-Key': reference,
+    },
+  })
 }
