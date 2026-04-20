@@ -169,3 +169,23 @@ export async function refundPayment(vipps, reference, body) {
     },
   })
 }
+
+/**
+ * Force approves a payment in the test environment. This is only available in the test environment.
+ *
+ * @param {import('./vipps.js').VippsInstance} vipps - The Vipps instance.
+ * @param {string} reference - The unique identifier for the payment.
+ * @param {Customer} customer - The target customer if the identity is known.
+ * @returns {Promise<void>} Resolves when the payment is approved.
+ */
+export async function forceApprove(vipps, reference, customer) {
+  const token = await getAccessToken(vipps)
+  const { baseUrl } = vipps
+
+  return request(vipps, 'POST', `${baseUrl}/epayment/v1/test/payments/${reference}/approve`, {
+    body: { customer },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+}

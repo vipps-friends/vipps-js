@@ -37,6 +37,10 @@ let instance = null
  * @returns {VippsInstance} An instance to be passed to all other functions.
  */
 export function initializeVipps(config) {
+  if (instance) {
+    return instance
+  }
+
   const useTest = config.useTest ?? false
   const baseUrlProd = config.baseUrlProd ?? 'https://api.vippsmobilepay.com'
   const baseUrlDev = config.baseUrlDev ?? 'https://apitest.vipps.no'

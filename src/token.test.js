@@ -23,10 +23,11 @@ describe('Token', () => {
 
   test('should use getToken hook if provided', async () => {
     const customToken = 'external-token-123'
-    const vipps = initializeVipps({
+    const vipps = {
       ...config,
+      baseUrl: 'https://apitest.vipps.no',
       getToken: async () => customToken,
-    })
+    }
 
     const token = await getAccessToken(vipps)
     assert.strictEqual(token, customToken)
@@ -34,21 +35,24 @@ describe('Token', () => {
 
   test('should call setToken hook if provided', async () => {
     let capturedToken = null
-    const vipps = initializeVipps({
+    const vipps = {
       ...config,
+      baseUrl: 'https://apitest.vipps.no',
       setToken: async ({ access_token }) => {
         capturedToken = access_token
       },
-    })
+    }
 
     const token = await getAccessToken(vipps)
     assert.strictEqual(capturedToken, token)
   })
 
   test('should return cached token if not expired', async () => {
-    const vipps = initializeVipps(config)
-    vipps.expiresOn = Date.now() + 120000
-    vipps.token = 'cached-token'
+    const vipps = {
+      ...config,
+      expiresOn: Date.now() + 120000,
+      token: 'cached-token',
+    }
 
     const token = await getAccessToken(vipps)
     assert.strictEqual(token, 'cached-token')
