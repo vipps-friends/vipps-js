@@ -46,7 +46,7 @@ import { getAccessToken } from './token.js'
 
 /**
  * @typedef {Object} PaymentDetails
- * @property {string} reference - The `reference` is the unique identifier for the payment, specified when initiating the payment.
+ * @property {string} reference - The `reference` is the unique identifier for the payment, specified when initiating the payment. The reference must be unique for the sales unit (MSN), but is not _globally_ unique, so several MSNs may use the same reference.
  * @property {'CREATED' | 'AUTHORIZED' | 'CAPTURED' | 'CANCELLED' | 'REFUNDED' | 'ABORTED' | 'EXPIRED' | 'TERMINATED'} state - The state of the Payment. One of: `CREATED`: The user has not yet acted upon the payment. `ABORTED`: The user has aborted the payment before authorization. This is a final state. `EXPIRED`: The user did not act on the payment within the payment expiration time. This is a final state. `AUTHORIZED`: The user has approved the payment. This is a final state. `TERMINATED`: The merchant has terminated the payment via the cancelPayment endpoint. This is a final state.
  * @property {Amount} amount - Amount object, containing a `value` and a `currency`.
  * @property {PaymentAggregate} aggregate - Summary of all financial actions taken on this reference.
@@ -57,7 +57,11 @@ import { getAccessToken } from './token.js'
 
 /**
  * @typedef {Object} AdjustmentResponse
+ * @property {Amount} amount - Amount object, containing a `value` and a `currency`.
+ * @property {'CREATED' | 'AUTHORIZED' | 'CAPTURED' | 'CANCELLED' | 'REFUNDED' | 'ABORTED' | 'EXPIRED' | 'TERMINATED'} state - The state of the Payment.
  * @property {PaymentAggregate} aggregate - Summary of all financial actions taken on this reference.
+ * @property {string} pspReference - Each payment operation (i.e., create, capture, refund, cancel) will have a unique `pspReference`, defined by Vipps MobilePay.
+ * @property {string} reference - The `reference` is the unique identifier for the payment, specified when initiating the payment.
  */
 
 /**
@@ -170,20 +174,25 @@ export async function refundPayment(vipps, reference, body) {
   })
 }
 
+/** @typedef {Object} ApprovePaymentRequest
+ * @property {Customer} customer - The target customer if the identity is known. The customer can be specified either with phone number, the customer token or with the user's personal QR code Specifying more than one of these will result in an error.
+ * @property {string} [token] - The token value received in the redirectUrl property in the Create payment response
+ */
+
 /**
  * Force approves a payment in the test environment. This is only available in the test environment.
  *
  * @param {import('./vipps.js').VippsInstance} vipps - The Vipps instance.
  * @param {string} reference - The unique identifier for the payment.
- * @param {Customer} customer - The target customer if the identity is known.
+ * @param {ApprovePaymentRequest} body - The capture request body.
  * @returns {Promise<void>} Resolves when the payment is approved.
  */
-export async function forceApprove(vipps, reference, customer) {
+export async function forceApprove(vipps, reference, body) {
   const token = await getAccessToken(vipps)
   const { baseUrl } = vipps
 
   return request(vipps, 'POST', `${baseUrl}/epayment/v1/test/payments/${reference}/approve`, {
-    body: { customer },
+    body,
     headers: {
       Authorization: `Bearer ${token}`,
     },

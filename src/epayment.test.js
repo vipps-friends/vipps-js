@@ -1,4 +1,4 @@
-import { ok, partialDeepStrictEqual, strictEqual } from 'node:assert'
+import { ok, partialDeepStrictEqual, rejects, strictEqual } from 'node:assert'
 import { describe, test } from 'node:test'
 import {
   cancelPayment,
@@ -26,35 +26,111 @@ describe('ePayment', () => {
   test('should create, get and cancel a payment', async () => {
     const reference = `test-cancel-${Date.now()}`
     const createResponse = await createPayment(vipps, {
-      amount: {
-        currency: 'NOK',
-        value: 1000,
-      },
-      customer: {
-        phoneNumber: '4740000000',
-      },
-      metadata: {
-        testKey: 'testValue',
-      },
+      amount: { currency: 'NOK', value: 1000 },
+      customer: { phoneNumber: '4740000000' },
+      metadata: { testKey: 'testValue' },
       paymentDescription: 'Integration test payment cancel',
-      paymentMethod: {
-        type: 'WALLET',
+      paymentMethod: { type: 'WALLET' },
+      reference,
+      returnUrl: 'https://example.com/redirect',
+      userFlow: 'WEB_REDIRECT',
+    })
+    ok(createResponse.redirectUrl)
+    strictEqual(createResponse.reference, reference)
+
+    const details = await getPayment(vipps, reference)
+    partialDeepStrictEqual(details, {
+      aggregate: {
+        authorizedAmount: { currency: 'NOK', value: 0 },
+        cancelledAmount: { currency: 'NOK', value: 0 },
+        capturedAmount: { currency: 'NOK', value: 0 },
+        refundedAmount: { currency: 'NOK', value: 0 },
       },
+      amount: { currency: 'NOK', value: 1000 },
+      metadata: { testKey: 'testValue' },
+      paymentMethod: { type: 'WALLET' },
+      profile: {},
+      reference,
+      state: 'CREATED',
+    })
+
+    const cancelResponse = await cancelPayment(vipps, reference)
+    partialDeepStrictEqual(cancelResponse, {
+      aggregate: {
+        authorizedAmount: { currency: 'NOK', value: 0 },
+        cancelledAmount: { currency: 'NOK', value: 1000 },
+        capturedAmount: { currency: 'NOK', value: 0 },
+        refundedAmount: { currency: 'NOK', value: 0 },
+      },
+      amount: { currency: 'NOK', value: 1000 },
+      reference,
+      state: 'TERMINATED',
+    })
+  })
+
+  test('should create, force approve, capture and refund a payment', async () => {
+    const reference = `test-force-${Date.now()}`
+    const createResponse = await createPayment(vipps, {
+      amount: { currency: 'NOK', value: 1000 },
+      paymentMethod: { type: 'WALLET' },
       reference,
       returnUrl: 'https://example.com/redirect',
       userFlow: 'WEB_REDIRECT',
     })
     strictEqual(createResponse.reference, reference)
-    ok(createResponse.redirectUrl, 'Should have a redirectUrl')
 
-    const details = await getPayment(vipps, reference)
-    strictEqual(details.reference, reference)
-    strictEqual(details.state, 'CREATED')
+    await forceApprove(vipps, reference, { customer: { phoneNumber: '4793313386' } })
+    const approved = await getPayment(vipps, reference)
+    partialDeepStrictEqual(approved, {
+      aggregate: {
+        authorizedAmount: { currency: 'NOK', value: 1000 },
+        cancelledAmount: { currency: 'NOK', value: 0 },
+        capturedAmount: { currency: 'NOK', value: 0 },
+        refundedAmount: { currency: 'NOK', value: 0 },
+      },
+      amount: { currency: 'NOK', value: 1000 },
+      paymentMethod: {
+        cardBin: '429198',
+        type: 'WALLET',
+      },
+      profile: {},
+      reference,
+      state: 'AUTHORIZED',
+    })
 
-    const cancelResponse = await cancelPayment(vipps, reference)
-    ok(cancelResponse.aggregate, 'Should return aggregate in response')
+    const captured = await capturePayment(vipps, reference, {
+      modificationAmount: { currency: 'NOK', value: 1000 },
+    })
+    partialDeepStrictEqual(captured, {
+      aggregate: {
+        authorizedAmount: { currency: 'NOK', value: 1000 },
+        cancelledAmount: { currency: 'NOK', value: 0 },
+        capturedAmount: { currency: 'NOK', value: 1000 },
+        refundedAmount: { currency: 'NOK', value: 0 },
+      },
+      amount: { currency: 'NOK', value: 1000 },
+      reference,
+      state: 'AUTHORIZED',
+    })
 
-    const cancelledDetails = await getPayment(vipps, reference)
-    strictEqual(cancelledDetails.state, 'TERMINATED', 'Payment should be TERMINATED after cancel')
+    const refunded = await refundPayment(vipps, reference, {
+      modificationAmount: { currency: 'NOK', value: 500 },
+    })
+    partialDeepStrictEqual(refunded, {
+      aggregate: {
+        authorizedAmount: { currency: 'NOK', value: 1000 },
+        cancelledAmount: { currency: 'NOK', value: 0 },
+        capturedAmount: { currency: 'NOK', value: 1000 },
+        refundedAmount: { currency: 'NOK', value: 500 },
+      },
+      amount: { currency: 'NOK', value: 1000 },
+      reference,
+      state: 'AUTHORIZED',
+    })
+  })
+
+  test('should fail for non-existent payment', async () => {
+    const reference = `test-non-existent-${Date.now()}`
+    await rejects(getPayment(vipps, reference))
   })
 })

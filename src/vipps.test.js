@@ -1,9 +1,9 @@
-import { ok, strictEqual } from 'node:assert'
+import { ok } from 'node:assert'
 import { describe, test } from 'node:test'
 import { getVipps, initializeVipps } from './index.js'
 
-describe('Vipps Initialization', () => {
-  test('should return the same instance if initialized twice', () => {
+describe('Vipps', () => {
+  test('should return the same instance', () => {
     const config = {
       clientId: 'test-client-id',
       clientSecret: 'test-client-secret',
@@ -12,10 +12,8 @@ describe('Vipps Initialization', () => {
     }
 
     const first = initializeVipps(config)
-    const second = initializeVipps({ ...config, clientId: 'other' })
-    const third = getVipps()
+    const second = getVipps()
 
     ok(first === second, 'Should return existing instance')
-    ok(first === third, 'getVipps should return initialized instance')
   })
 })

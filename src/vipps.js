@@ -17,6 +17,8 @@
 
 /**
  * @typedef {Object} Internal
+ * @property {string} pluginName - The name of the ecommerce plugin (if applicable). One word in lowercase letters is good.
+ * @property {string} pluginVersion - The version number of the ecommerce plugin (if applicable).
  * @property {string} baseUrl - The base URL for the API.
  * @property {string|null} token - Cached access token.
  * @property {number} expiresOn - Expiry timestamp in milliseconds.
@@ -37,10 +39,6 @@ let instance = null
  * @returns {VippsInstance} An instance to be passed to all other functions.
  */
 export function initializeVipps(config) {
-  if (instance) {
-    return instance
-  }
-
   const useTest = config.useTest ?? false
   const baseUrlProd = config.baseUrlProd ?? 'https://api.vippsmobilepay.com'
   const baseUrlDev = config.baseUrlDev ?? 'https://apitest.vipps.no'

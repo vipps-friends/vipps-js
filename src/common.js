@@ -46,8 +46,11 @@ export async function request(vipps, method, url, { headers = {}, body } = {}) {
 
   if (!response.ok) {
     const errorBody = await response.json()
-    throw { status: response.status, ...errorBody }
+    throw { status: response.status, url, ...errorBody }
   }
-
-  return response.json()
+  const responseBody = await response.text()
+  if (responseBody.length === 0) {
+    return {}
+  }
+  return JSON.parse(responseBody)
 }
