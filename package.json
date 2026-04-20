@@ -60,8 +60,9 @@
     "format:write": "biome format --write .",
     "lint": "biome lint .",
     "lint:write": "biome lint --write .",
+    "precommit": "npm run format:write && npm run lint:write && npm run check:write",
     "test": "node --env-file-if-exists=.env.local --test src/**/*.test.js",
-    "test:all": "npm run typegen && npm run download-spec && npm run format && npm run lint && npm run check && npm run test",
+    "test:all": "npm run typegen && npm run download-spec && npm run format && npm run lint && npm run check && npm run test && npm run test:coverage",
     "test:coverage": "node --env-file-if-exists=.env.local --test --experimental-test-coverage src/**/*.test.js",
     "typegen": "tsc"
   },
