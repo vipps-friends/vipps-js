@@ -13,7 +13,7 @@ const config = {
 describe('Token', () => {
   const vipps = initializeVipps(config)
 
-  test('should fetch an access token from Vipps MT environment', async () => {
+  test('should fetch an access token', async () => {
     const token = await getAccessToken(vipps)
 
     assert.ok(token, 'Token should be defined')

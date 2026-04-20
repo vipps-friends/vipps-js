@@ -61,6 +61,7 @@
     "lint": "biome lint .",
     "lint:write": "biome lint --write .",
     "test": "node --env-file-if-exists=.env.local --test src/**/*.test.js",
+    "test:all": "npm run typegen && npm run download-spec && npm run format && npm run lint && npm run check && npm run test",
     "typegen": "tsc"
   },
   "type": "module",
