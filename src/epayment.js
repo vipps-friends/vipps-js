@@ -1,3 +1,4 @@
+import { request } from './common.js'
 import { getAccessToken } from './token.js'
 
 /**
@@ -45,7 +46,7 @@ import { getAccessToken } from './token.js'
 
 /**
  * @typedef {Object} PaymentDetails
- * @property {string} reference - The `reference` is the unique identifier for the payment, specified when initiating the payment.
+ * @property {string} reference - The `reference` is the unique identifier for the payment, specified when initiating the payment. The reference must be unique for the sales unit (MSN), but is not _globally_ unique, so several MSNs may use the same reference.
  * @property {'CREATED' | 'AUTHORIZED' | 'CAPTURED' | 'CANCELLED' | 'REFUNDED' | 'ABORTED' | 'EXPIRED' | 'TERMINATED'} state - The state of the Payment. One of: `CREATED`: The user has not yet acted upon the payment. `ABORTED`: The user has aborted the payment before authorization. This is a final state. `EXPIRED`: The user did not act on the payment within the payment expiration time. This is a final state. `AUTHORIZED`: The user has approved the payment. This is a final state. `TERMINATED`: The merchant has terminated the payment via the cancelPayment endpoint. This is a final state.
  * @property {Amount} amount - Amount object, containing a `value` and a `currency`.
  * @property {PaymentAggregate} aggregate - Summary of all financial actions taken on this reference.
@@ -56,7 +57,11 @@ import { getAccessToken } from './token.js'
 
 /**
  * @typedef {Object} AdjustmentResponse
+ * @property {Amount} amount - Amount object, containing a `value` and a `currency`.
+ * @property {'CREATED' | 'AUTHORIZED' | 'CAPTURED' | 'CANCELLED' | 'REFUNDED' | 'ABORTED' | 'EXPIRED' | 'TERMINATED'} state - The state of the Payment.
  * @property {PaymentAggregate} aggregate - Summary of all financial actions taken on this reference.
+ * @property {string} pspReference - Each payment operation (i.e., create, capture, refund, cancel) will have a unique `pspReference`, defined by Vipps MobilePay.
+ * @property {string} reference - The `reference` is the unique identifier for the payment, specified when initiating the payment.
  */
 
 /**
@@ -70,67 +75,6 @@ import { getAccessToken } from './token.js'
  */
 
 /**
- * Internal helper to send a request to the ePayment API.
- *
- * @param {import('./vipps.js').VippsInstance} vipps
- * @param {string} method
- * @param {string} path
- * @param {Object} [body]
- * @param {string} [idempotencyKey]
- * @returns {Promise<any>}
- */
-async function sendRequest(vipps, method, path, body, idempotencyKey) {
-  const token = await getAccessToken(vipps)
-  const {
-    baseUrl,
-    subscriptionKey,
-    merchantSerialNumber,
-    systemName,
-    systemVersion,
-    pluginName,
-    pluginVersion,
-  } = vipps
-
-  /** @type {Record<string, string>} */
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    'Content-Type': 'application/json',
-    'Merchant-Serial-Number': merchantSerialNumber,
-    'Ocp-Apim-Subscription-Key': subscriptionKey,
-  }
-
-  if (idempotencyKey) {
-    headers['Idempotency-Key'] = idempotencyKey
-  }
-
-  if (systemName) {
-    headers['Vipps-System-Name'] = systemName
-  }
-  if (systemVersion) {
-    headers['Vipps-System-Version'] = systemVersion
-  }
-  if (pluginName) {
-    headers['Vipps-System-Plugin-Name'] = pluginName
-  }
-  if (pluginVersion) {
-    headers['Vipps-System-Plugin-Version'] = pluginVersion
-  }
-
-  const response = await fetch(`${baseUrl}/epayment/v1/payments${path}`, {
-    body: body ? JSON.stringify(body) : undefined,
-    headers,
-    method,
-  })
-
-  if (!response.ok) {
-    const errorBody = await response.json().catch(() => ({}))
-    throw { status: response.status, ...errorBody }
-  }
-
-  return response.json()
-}
-
-/**
  * Initiates a new payment session.
  *
  * @param {import('./vipps.js').VippsInstance} vipps - The Vipps instance.
@@ -138,7 +82,17 @@ async function sendRequest(vipps, method, path, body, idempotencyKey) {
  * @returns {Promise<PaymentResponse>} The payment response from Vipps.
  */
 export async function createPayment(vipps, body) {
-  return sendRequest(vipps, 'POST', '', body, body.reference)
+  const token = await getAccessToken(vipps)
+  const { baseUrl } = vipps
+  const { reference } = body
+
+  return request(vipps, 'POST', `${baseUrl}/epayment/v1/payments`, {
+    body,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Idempotency-Key': reference,
+    },
+  })
 }
 
 /**
@@ -149,7 +103,14 @@ export async function createPayment(vipps, body) {
  * @returns {Promise<PaymentDetails>} The current state of the payment.
  */
 export async function getPayment(vipps, reference) {
-  return sendRequest(vipps, 'GET', `/${reference}`)
+  const token = await getAccessToken(vipps)
+  const { baseUrl } = vipps
+
+  return request(vipps, 'GET', `${baseUrl}/epayment/v1/payments/${reference}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
 }
 
 /**
@@ -161,7 +122,16 @@ export async function getPayment(vipps, reference) {
  * @returns {Promise<AdjustmentResponse>} The capture response.
  */
 export async function capturePayment(vipps, reference, body) {
-  return sendRequest(vipps, 'POST', `/${reference}/capture`, body, reference)
+  const token = await getAccessToken(vipps)
+  const { baseUrl } = vipps
+
+  return request(vipps, 'POST', `${baseUrl}/epayment/v1/payments/${reference}/capture`, {
+    body,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Idempotency-Key': reference,
+    },
+  })
 }
 
 /**
@@ -172,7 +142,15 @@ export async function capturePayment(vipps, reference, body) {
  * @returns {Promise<AdjustmentResponse>} The cancel response.
  */
 export async function cancelPayment(vipps, reference) {
-  return sendRequest(vipps, 'POST', `/${reference}/cancel`, {}, reference)
+  const token = await getAccessToken(vipps)
+  const { baseUrl } = vipps
+
+  return request(vipps, 'POST', `${baseUrl}/epayment/v1/payments/${reference}/cancel`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Idempotency-Key': reference,
+    },
+  })
 }
 
 /**
@@ -184,5 +162,39 @@ export async function cancelPayment(vipps, reference) {
  * @returns {Promise<AdjustmentResponse>} The refund response.
  */
 export async function refundPayment(vipps, reference, body) {
-  return sendRequest(vipps, 'POST', `/${reference}/refund`, body, reference)
+  const token = await getAccessToken(vipps)
+  const { baseUrl } = vipps
+
+  return request(vipps, 'POST', `${baseUrl}/epayment/v1/payments/${reference}/refund`, {
+    body,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Idempotency-Key': reference,
+    },
+  })
+}
+
+/** @typedef {Object} ApprovePaymentRequest
+ * @property {Customer} customer - The target customer if the identity is known. The customer can be specified either with phone number, the customer token or with the user's personal QR code Specifying more than one of these will result in an error.
+ * @property {string} [token] - The token value received in the redirectUrl property in the Create payment response
+ */
+
+/**
+ * Force approves a payment in the test environment. This is only available in the test environment.
+ *
+ * @param {import('./vipps.js').VippsInstance} vipps - The Vipps instance.
+ * @param {string} reference - The unique identifier for the payment.
+ * @param {ApprovePaymentRequest} body - The capture request body.
+ * @returns {Promise<void>} Resolves when the payment is approved.
+ */
+export async function forceApprove(vipps, reference, body) {
+  const token = await getAccessToken(vipps)
+  const { baseUrl } = vipps
+
+  return request(vipps, 'POST', `${baseUrl}/epayment/v1/test/payments/${reference}/approve`, {
+    body,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
 }

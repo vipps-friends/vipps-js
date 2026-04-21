@@ -11,25 +11,21 @@
  * @property {string} [systemVersion] - The version number of the ecommerce solution.
  * @property {string} [pluginName] - The name of the ecommerce plugin (if applicable). One word in lowercase letters is good.
  * @property {string} [pluginVersion] - The version number of the ecommerce plugin (if applicable).
- * @property {Function} [getToken] - Optional external token getter.
- * @property {Function} [setToken] - Optional external token setter.
+ * @property {function(): Promise<string>} [getToken] - Optional external token getter.
+ * @property {function(import("./token").AccessTokenResponse): Promise<void>} [setToken] - Optional external token setter.
  */
 
 /**
- * @typedef {Object} VippsInstance
- * @property {string} clientId
- * @property {string} clientSecret
- * @property {string} subscriptionKey
- * @property {string} merchantSerialNumber
- * @property {string} baseUrl
- * @property {string} [systemName]
- * @property {string} [systemVersion]
- * @property {string} [pluginName]
- * @property {string} [pluginVersion]
- * @property {Function} [getToken]
- * @property {Function} [setToken]
+ * @typedef {Object} Internal
+ * @property {string} pluginName - The name of the ecommerce plugin (if applicable). One word in lowercase letters is good.
+ * @property {string} pluginVersion - The version number of the ecommerce plugin (if applicable).
+ * @property {string} baseUrl - The base URL for the API.
  * @property {string|null} token - Cached access token.
- * @property {number} expiresAt - Expiry timestamp in milliseconds.
+ * @property {number} expiresOn - Expiry timestamp in milliseconds.
+ */
+
+/**
+ * @typedef {VippsConfig & Internal} VippsInstance
  */
 
 /** @type {VippsInstance | null} */
@@ -43,10 +39,6 @@ let instance = null
  * @returns {VippsInstance} An instance to be passed to all other functions.
  */
 export function initializeVipps(config) {
-  if (instance) {
-    return instance
-  }
-
   const useTest = config.useTest ?? false
   const baseUrlProd = config.baseUrlProd ?? 'https://api.vippsmobilepay.com'
   const baseUrlDev = config.baseUrlDev ?? 'https://apitest.vipps.no'
@@ -57,7 +49,7 @@ export function initializeVipps(config) {
     pluginVersion: '1.0.0',
     ...config,
     baseUrl,
-    expiresAt: 0,
+    expiresOn: 0,
     token: null,
   }
 

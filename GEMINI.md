@@ -17,5 +17,5 @@ This file takes absolute precedence over general defaults.
 - **Error Handling**: Do not create a custom `VippsError` class. Let native errors bubble up, but ensure that for HTTP errors, the response body from Vipps is attached or available for debugging.
 - **Idempotency**: Automate `Idempotency-Key` generation (UUID) for all write operations unless explicitly provided by the user.
 - **Comments**: ONLY JSDoc comments (`/** ... */`) are allowed. All other comments (e.g., `//`, `/* ... */`) must be removed or converted to JSDoc if they provide public API value.
-- **Linting & Formatting**: Use Biome for all linting and formatting. Run `npm run check` before committing. Semicolons are not allowed unless necessary.
+- **Linting & Formatting**: Use Biome for all linting and formatting. Always call `npm run precommit` before committing. Semicolons are not allowed unless necessary.
 - **OpenAPI Specifications**: Use `npm run download-spec` to fetch the latest OpenAPI specifications from the official Vipps MobilePay documentation for reference.
