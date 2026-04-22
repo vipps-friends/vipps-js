@@ -85,6 +85,10 @@ If you need support for other Vipps MobilePay APIs (Recurring, Login, Checkout, 
 
 If you work at Vipps MobilePay and would like to get in touch regarding the direction of this library, or if you'd like to see it become an official package, please feel free to reach out via GitHub issues or directly to the contributors.
 
+## Commercial Support
+
+Need help with integration, custom features, or priority support? We offer paid consulting and support services to help you get the most out of your Vipps MobilePay integration. Open an issue or reach out to the maintainers.
+
 ## License
 
 MIT
