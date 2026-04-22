@@ -1,5 +1,10 @@
 # @vipps-friends/vipps-js
 
+[![Build Status](https://github.com/vipps-friends/vipps-js/actions/workflows/test.yml/badge.svg)](https://github.com/vipps-friends/vipps-js/actions)
+[![Test Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](https://github.com/vipps-friends/vipps-js/actions/workflows/test.yml)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@vipps-friends/vipps-js)](https://bundlephobia.com/package/@vipps-friends/vipps-js)
+[![Zero Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen.svg)](https://npmgraph.js.org/?q=%40vipps-friends%2Fvipps-js)
+
 A modern, functional, and tree-shakeable JavaScript library for integrating with the **Vipps MobilePay ePayment API v1**.
 
 > **⚠️ Disclaimer**: This is **not** an official Vipps MobilePay package. It is maintained by the community.
