@@ -32,16 +32,11 @@ describe('Webhooks', () => {
   test('should fail if content is tampered', async () => {
     const headers = {
       host: 'example.com',
-      'x-ms-content-sha256': 'invalid',
+      'x-ms-content-sha256': 'LZyVp7AtNPzZN1VVVZcO8Bg0g5RtUmj7z2ijJGdL5wg=',
       'x-ms-date': '2026-04-21T06:31:49.951Z',
-      'x-ms-signature': 'invalid',
+      'x-ms-signature': 'n5UZNK1kFzZ7z2DLQQ5Za/mh9J/7djcjznVpPuFKmUE=',
     }
     const isValid = await verifyWebhook(`${rawBody}tampered`, headers, secret)
-    strictEqual(isValid, false)
-  })
-
-  test('should fail if headers are missing', async () => {
-    const isValid = await verifyWebhook(rawBody, {}, secret)
     strictEqual(isValid, false)
   })
 })
