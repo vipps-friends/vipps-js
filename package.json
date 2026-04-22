@@ -14,12 +14,18 @@
     "typescript": "6.0.3"
   },
   "files": [
+    "src/common.js",
     "src/epayment.js",
     "src/index.js",
     "src/token.js",
     "src/vipps.js",
     "src/webhooks.js",
-    "types"
+    "types/common.js",
+    "types/epayment.js",
+    "types/index.js",
+    "types/token.js",
+    "types/vipps.js",
+    "types/webhooks.js"
   ],
   "keywords": [
     "vipps",

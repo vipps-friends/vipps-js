@@ -15,5 +15,6 @@
     "target": "ESNext",
     "types": ["node"]
   },
+  "exclude": ["src/**/*.test.js"],
   "include": ["src/**/*"]
 }
