@@ -20,12 +20,12 @@
     "src/token.js",
     "src/vipps.js",
     "src/webhooks.js",
-    "types/common.js",
-    "types/epayment.js",
-    "types/index.js",
-    "types/token.js",
-    "types/vipps.js",
-    "types/webhooks.js"
+    "types/common.d.ts",
+    "types/epayment.d.ts",
+    "types/index.d.ts",
+    "types/token.d.ts",
+    "types/vipps.d.ts",
+    "types/webhooks.d.ts"
   ],
   "keywords": [
     "vipps",
