@@ -1,20 +1,26 @@
 /**
+ * @typedef {Object} SignatureHeaders
+ * @property {string} host - The host header.
+ * @property {string} x-ms-date - The date header.
+ * @property {string} x-ms-signature - The signature header.
+ * @property {string} x-ms-content-sha256 - The content SHA256 header.
+ */
+
+/**
  * Verifies the integrity and signature of a Vipps MobilePay webhook.
  *
  * @param {string} rawBody - The raw request body as a string.
- * @param {Record<string, string>} headers - The request headers.
+ * @param {SignatureHeaders} headers - The request headers.
  * @param {string} webhookSecret - The secret for the webhook.
  * @returns {Promise<boolean>} True if the webhook is valid.
  */
 export async function verifyWebhook(rawBody, headers, webhookSecret) {
-  const contentSha256 = headers['x-ms-content-sha256']
-  const signature = headers['x-ms-signature']
-  const date = headers['x-ms-date']
-  const host = headers.host
-
-  if (!contentSha256 || !signature || !date || !host) {
-    return false
-  }
+  const {
+    'x-ms-content-sha256': contentSha256,
+    'x-ms-signature': signature,
+    'x-ms-date': date,
+    host,
+  } = headers
 
   const encoder = new TextEncoder()
   const data = encoder.encode(rawBody)

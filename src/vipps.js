@@ -11,7 +11,7 @@
  * @property {string} [systemVersion] - The version number of the ecommerce solution.
  * @property {string} [pluginName] - The name of the ecommerce plugin (if applicable). One word in lowercase letters is good.
  * @property {string} [pluginVersion] - The version number of the ecommerce plugin (if applicable).
- * @property {function(): Promise<string>} [getToken] - Optional external token getter.
+ * @property {function(): Promise<string | null>} [getToken] - Optional external token getter.
  * @property {function(import("./token").AccessTokenResponse): Promise<void>} [setToken] - Optional external token setter.
  */
 
