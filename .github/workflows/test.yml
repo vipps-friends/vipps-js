@@ -17,7 +17,7 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run typegen
-      - run: npm test
+      - run: npm run test:coverage
         env:
           VIPPS_CLIENT_ID: ${{ secrets.VIPPS_CLIENT_ID }}
           VIPPS_CLIENT_SECRET: ${{ secrets.VIPPS_CLIENT_SECRET }}
