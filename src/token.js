@@ -1,3 +1,5 @@
+// @ts-check
+
 import { request } from './common.js'
 
 /**

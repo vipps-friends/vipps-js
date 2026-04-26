@@ -1,3 +1,5 @@
+// @ts-check
+
 import { ok, partialDeepStrictEqual, rejects, strictEqual } from 'node:assert'
 import { describe, test } from 'node:test'
 import {
