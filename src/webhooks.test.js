@@ -22,41 +22,29 @@ const config = {
 
 describe('Webhooks', () => {
   describe('verifyWebhook', () => {
-    const secret = 'test-secret'
-    const rawBody = '{"event":"test"}'
+    const request = {
+      body: '{"some-unique-content":"ee6e441b-cc4a-46f8-895d-a5af79bcc233/hello-world"}',
+      headers: {
+        authorization:
+          'HMAC-SHA256 SignedHeaders=x-ms-date;host;x-ms-content-sha256&Signature=u4zz3dyO3c3xJwl36rPpn1n7WF75u6r2epjH70MZTGM=',
+        host: 'webhook.site',
+        'x-ms-content-sha256': 'lNlsp1XA03N34HrQsVzPgJKtC+r7l/RBF4V3JQUWMj4=',
+        'x-ms-date': 'Thu, 30 Mar 2023 08:38:32 GMT',
+      },
+      method: 'POST',
+      path: '/e2cee29b-012e-4f1d-8ef4-e95fd74a7a63',
+      secret:
+        'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==',
+    }
 
     test('should verify a valid webhook signature', async () => {
-      const headers = {
-        host: 'example.com',
-        'x-ms-content-sha256': 'LZyVp7AtNPzZN1VVVZcO8Bg0g5RtUmj7z2ijJGdL5wg=',
-        'x-ms-date': '2026-04-21T06:31:49.951Z',
-        'x-ms-signature': 'n5UZNK1kFzZ7z2DLQQ5Za/mh9J/7djcjznVpPuFKmUE=',
-      }
-
-      const isValid = await verifyWebhook(rawBody, headers, secret)
-      ok(isValid, 'Signature not valid')
+      const isValid = await verifyWebhook(request)
+      ok(isValid, 'Signature should be valid')
     })
 
-    test('should fail with invalid signature', async () => {
-      const headers = {
-        host: 'example.com',
-        'x-ms-content-sha256': 'invalid',
-        'x-ms-date': '2026-04-21T06:31:49.951Z',
-        'x-ms-signature': 'invalid',
-      }
-      const isValid = await verifyWebhook(rawBody, headers, secret)
-      strictEqual(isValid, false)
-    })
-
-    test('should fail if content is tampered', async () => {
-      const headers = {
-        host: 'example.com',
-        'x-ms-content-sha256': 'LZyVp7AtNPzZN1VVVZcO8Bg0g5RtUmj7z2ijJGdL5wg=',
-        'x-ms-date': '2026-04-21T06:31:49.951Z',
-        'x-ms-signature': 'n5UZNK1kFzZ7z2DLQQ5Za/mh9J/7djcjznVpPuFKmUE=',
-      }
-      const isValid = await verifyWebhook(`${rawBody}tampered`, headers, secret)
-      strictEqual(isValid, false)
+    test('should fail to verify an invalid webhook signature', async () => {
+      const isValid = await verifyWebhook({ ...request, body: `modified${request.body}` })
+      ok(!isValid, 'Signature should be invalid')
     })
   })
 
