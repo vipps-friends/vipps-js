@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * @typedef {Object} VippsConfig
  * @property {string} clientId - The `client_id` is available on the business portal, under the Developer section. Think of it as the "username".

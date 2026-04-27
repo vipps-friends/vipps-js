@@ -1,3 +1,5 @@
+// @ts-check
+
 import { ok } from 'node:assert'
 import { describe, test } from 'node:test'
 import { getVipps, initializeVipps } from './index.js'

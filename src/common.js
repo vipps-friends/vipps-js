@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * Internal helper to send a request to the Vipps MobilePay API.
  *

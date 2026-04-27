@@ -1,12 +1,14 @@
+// @ts-check
+
 import { request } from './common.js'
 import { getAccessToken } from './token.js'
 
 /**
  * @typedef {Object} SignatureHeaders
  * @property {string} host - The host header.
- * @property {string} x-ms-date - The date header.
- * @property {string} x-ms-signature - The signature header.
  * @property {string} x-ms-content-sha256 - The content SHA256 header.
+ * @property {string} x-ms-date - The date header.
+ * @property {string} authorization - The signature header.
  */
 
 /**
@@ -133,44 +135,48 @@ export async function deleteWebhook(vipps, id) {
 }
 
 /**
+ * @param {ArrayBuffer} buffer
+ * @returns {string}
+ */
+const ArrayBuffer2Base64 = (buffer) => btoa(String.fromCharCode(...new Uint8Array(buffer)))
+
+const encoder = new TextEncoder()
+
+/**
  * Verifies the integrity and signature of a Vipps MobilePay webhook.
  *
- * @param {string} rawBody - The raw request body as a string.
- * @param {SignatureHeaders} headers - The request headers.
- * @param {string} webhookSecret - The secret for the webhook.
+ * @param {Object} options - The verification options.
+ * @param {string} options.method - The HTTP method (e.g., 'POST').
+ * @param {string} options.path - The request path including query parameters (e.g., '/webhook?id=123').
+ * @param {string} options.body - The raw request body as a string.
+ * @param {SignatureHeaders} options.headers - The request headers.
+ * @param {string} options.secret - The webhook secret.
  * @returns {Promise<boolean>} True if the webhook is valid.
  */
-export async function verifyWebhook(rawBody, headers, webhookSecret) {
-  const {
-    'x-ms-content-sha256': contentSha256,
-    'x-ms-signature': signature,
-    'x-ms-date': date,
-    host,
-  } = headers
+export async function verifyWebhook({ method, path, body, headers, secret }) {
+  const { subtle } = crypto
+  const { authorization, host, 'x-ms-date': date, 'x-ms-content-sha256': contentSha256 } = headers
 
-  const encoder = new TextEncoder()
-  const data = encoder.encode(rawBody)
+  const hashBuffer = await subtle.digest('SHA-256', encoder.encode(body))
+  const hash = ArrayBuffer2Base64(hashBuffer)
 
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  const calculatedContentSha256 = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)))
-
-  if (contentSha256 !== calculatedContentSha256) {
+  if (contentSha256 !== hash) {
     return false
   }
 
-  const stringToSign = `${date}\n${host}\n${contentSha256}`
-  const stringToSignBuffer = encoder.encode(stringToSign)
+  const stringToSign = `${method}\n${path}\n${date};${host};${contentSha256}`
 
-  const keyBuffer = encoder.encode(webhookSecret)
-  const key = await crypto.subtle.importKey(
+  const key = await subtle.importKey(
     'raw',
-    keyBuffer,
+    encoder.encode(secret),
     { hash: 'SHA-256', name: 'HMAC' },
     false,
-    ['verify'],
+    ['sign'],
   )
 
-  const signatureBuffer = Uint8Array.from(atob(signature), (c) => c.charCodeAt(0))
+  const signatureBuffer = await subtle.sign('HMAC', key, encoder.encode(stringToSign))
+  const signature = ArrayBuffer2Base64(signatureBuffer)
+  const expectedAuth = `HMAC-SHA256 SignedHeaders=x-ms-date;host;x-ms-content-sha256&Signature=${signature}`
 
-  return crypto.subtle.verify('HMAC', key, signatureBuffer, stringToSignBuffer)
+  return authorization === expectedAuth
 }
